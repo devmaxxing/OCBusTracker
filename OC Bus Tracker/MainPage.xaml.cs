@@ -41,7 +41,7 @@ namespace OC_Bus_Tracker
             path = System.IO.Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path,
             "db.sqlite");
             conn = new SQLite.Net.SQLiteConnection(new
-               SQLite.Net.Platform.WinRT.SQLitePlatformWinRT(), path);
+               SQLite.Net.Platform.WinRT.SQLitePlatformWinRT(), path);            
             conn.CreateTable<StopRoute>();
         }
 
@@ -74,15 +74,10 @@ namespace OC_Bus_Tracker
                 if (IsInternet())
                 {
 
-                    string stopName = stopRoute.stopName;
-                    string routeName = stopRoute.routeName;
-                    int directionId = stopRoute.directionId;
-                    string stopId = stopRoute.stopId;
-                    string routeNum = stopRoute.routeNum;
                     var tripTimes = new string[3] { "No upcoming trips", "", "" };
 
                     HttpRequestMessage stopRouteRequest = new HttpRequestMessage();
-                    var queryString = httpQueryParams + "&stopNo=" + stopId + "&routeNo=" + routeNum;
+                    var queryString = httpQueryParams + "&stopNo=" + stopRoute.stopId + "&routeNo=" + stopRoute.routeNum;
                     stopRouteRequest.RequestUri = new Uri(OCTranspoInfo.ROUTE_URL + queryString);
 
                     var response = await getJSON(stopRouteRequest);
@@ -97,7 +92,7 @@ namespace OC_Bus_Tracker
                         }
                         catch (Exception e)
                         {
-                            route = (JObject)routeInfo["Route"]["RouteDirection"][directionId];
+                            route = (JObject)routeInfo["Route"]["RouteDirection"][stopRoute.directionId];
                         }
 
                         JArray trips = new JArray();
@@ -127,9 +122,7 @@ namespace OC_Bus_Tracker
                         }
                     }
                    
-                    RouteInfo r = new RouteInfo(stopName, routeName, directionId, tripTimes[0], tripTimes[1], tripTimes[2]);
-                    r.StopId = stopId;
-                    r.RouteNum = routeNum;
+                    RouteInfo r = new RouteInfo(stopRoute, tripTimes[0], tripTimes[1], tripTimes[2]);
 
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>{
@@ -244,9 +237,7 @@ namespace OC_Bus_Tracker
                         {
                             tripTimes[j] = (string)trips[j]["AdjustedScheduleTime"] + " min";
                         }
-                        RouteInfo r = new RouteInfo(stopName, routeName, directionId, tripTimes[0], tripTimes[1], tripTimes[2]);
-                        r.StopId = stopId;
-                        r.RouteNum = routeNum;
+                        RouteInfo r = new RouteInfo(stopName, stopId, routeName, routeNum, directionId, tripTimes[0], tripTimes[1], tripTimes[2]);
                         collection.Add(r);
                     }
                 }                
@@ -279,39 +270,27 @@ namespace OC_Bus_Tracker
 
         public class RouteInfo
         {
-            public RouteInfo(string routeName)
+            public RouteInfo(StopRoute sr, string t1, string t2, string t3)
             {
-                RouteName = routeName;
-            }
-
-            public RouteInfo(string routeName, string t1, string t2, string t3)
-            {
-                RouteName = routeName;
+                stopRoute = sr;
                 RouteTime1 = t1;
                 RouteTime2 = t2;
                 RouteTime3 = t3;
             }
 
-            public RouteInfo(string stopName, string routeName, string t1, string t2, string t3)
-                :this (routeName,t1,t2,t3)
+            public RouteInfo(string stopName, string stopId, string routeName, string routeNum, int directionId, string t1, string t2, string t3) : this(new StopRoute(), t1,t2,t3)
             {
-                StopName = stopName;
+                stopRoute.stopName = stopName;
+                stopRoute.stopId = stopId;
+                stopRoute.routeName = routeName;
+                stopRoute.routeNum = routeNum;
+                stopRoute.directionId = directionId;              
             }
 
-            public RouteInfo(string stopName, string routeName, int directionId, string t1, string t2, string t3)
-                :this (stopName, routeName, t1, t2, t3)
-            {
-                DirectionId = directionId;
-            }
-
-            public string RouteName { get; set; }
+            public StopRoute stopRoute { get; set; }
             public string RouteTime1 { get; set; }
             public string RouteTime2 { get; set; }
             public string RouteTime3 { get; set; }
-            public string StopName { get; set; }
-            public string StopId { get; set; }
-            public string RouteNum { get; set; }
-            public int DirectionId { get; set; }
         }
 
         private void PinRoutes(object sender, RoutedEventArgs e)
@@ -319,19 +298,12 @@ namespace OC_Bus_Tracker
             var selectedItems = resultsList.SelectedItems.OfType<RouteInfo>();
             foreach(var item in selectedItems)
             {
+                StopRoute sr = item.stopRoute;
                 if (savedRoutes.Where(route =>
-                route.StopId == item.StopId && route.RouteNum == item.RouteNum &&
-                route.DirectionId == item.DirectionId).Count() == 0)
+                route.stopRoute.stopId == sr.stopId && route.stopRoute.routeNum == sr.routeNum &&
+                route.stopRoute.directionId == sr.directionId).Count() == 0)
                 {
-                    var s = conn.Insert(new StopRoute()
-                    {
-                        stopName = item.StopName,
-                        directionId = item.DirectionId,
-                        stopId = item.StopId,
-                        routeNum = item.RouteNum,
-                        routeName = item.RouteName
-                    });
-
+                    var s = conn.Insert(sr);
                     savedRoutes.Add(item);
                 }
             }
@@ -364,7 +336,7 @@ namespace OC_Bus_Tracker
             {
                 
                 var query = conn.Table<StopRoute>().Where(
-                    s => s.directionId == item.DirectionId && s.routeNum == item.RouteNum && s.stopId == item.StopId);
+                    s => s.directionId == item.stopRoute.directionId && s.routeNum == item.stopRoute.routeNum && s.stopId == item.stopRoute.stopId);
                 var sr = query.ElementAt(0);
                 var d = conn.Delete<StopRoute>(sr.id);
                 savedRoutes.Remove(item);

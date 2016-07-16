@@ -17,8 +17,8 @@
                             <DataTemplate>
                                 <ListViewItem>
                                     <StackPanel Padding="0,5">
-                                        <TextBlock FontWeight="Bold" Text="{Binding StopName}" FontSize="14"/>
-                                        <TextBlock FontWeight="Bold" Text="{Binding RouteName}"/>
+                                        <TextBlock FontWeight="Bold" Text="{Binding stopRoute.stopName}" FontSize="14"/>
+                                        <TextBlock FontWeight="Bold" Text="{Binding stopRoute.routeName}"/>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Margin="0,0,20,0" Text="{Binding RouteTime1}"/>
                                             <TextBlock Margin="0,0,20,0" Text="{Binding RouteTime2}"/>
@@ -40,7 +40,7 @@
                             <DataTemplate>
                                 <ListViewItem>
                                     <StackPanel Padding="0,5">
-                                        <TextBlock FontWeight="Bold" Text="{Binding RouteName}"/>
+                                        <TextBlock FontWeight="Bold" Text="{Binding stopRoute.routeName}"/>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Margin="0,0,20,0" Text="{Binding RouteTime1}"/>
                                             <TextBlock Margin="0,0,20,0" Text="{Binding RouteTime2}"/>
