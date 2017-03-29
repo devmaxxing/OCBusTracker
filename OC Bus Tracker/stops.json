@@ -54285,17 +54285,6 @@
     "location_type": 0
   },
   {
-    "stop_id": "WI005",
-    "stop_code": null,
-    "stop_name": "EAGLESON / EAGLESON PARK & RIDE",
-    "stop_desc": null,
-    "stop_lat": 45.319054,
-    "stop_lon": -75.885208,
-    "zone_id": null,
-    "stop_url": null,
-    "location_type": 0
-  },
-  {
     "stop_id": "WI010",
     "stop_code": 1702,
     "stop_name": "EAGLESON / KATIMAVIK",

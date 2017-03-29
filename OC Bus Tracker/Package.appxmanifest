@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="6008OliverFei.OCBusTracker" Publisher="CN=8CCF9944-3D02-45C0-8C18-8AAE611E5756" Version="1.2.2.0" />
+  <Identity Name="6008OliverFei.OCBusTracker" Publisher="CN=8CCF9944-3D02-45C0-8C18-8AAE611E5756" Version="1.2.5.0" />
   <mp:PhoneIdentity PhoneProductId="61441c26-96ca-4cdf-9217-101513f277d0" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>OC Bus Tracker</DisplayName>

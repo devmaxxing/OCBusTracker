@@ -20,7 +20,7 @@ namespace OC_Bus_Tracker
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        public HttpClient httpClient = new HttpClient();
+        public HttpClient client;
         public ObservableCollection<RouteInfo> routesList = new ObservableCollection<RouteInfo>();
         public ObservableCollection<RouteInfo> savedRoutes = new ObservableCollection<RouteInfo>();
         public ObservableCollection<string> stopNames = new ObservableCollection<string>();
@@ -128,6 +128,7 @@ namespace OC_Bus_Tracker
                     () =>{
                         savedRoutes.Add(r);
                     });
+                    
                 }else
                 {
                     MessageDialog msgDialog = new MessageDialog("No internet connection.", "Error");
@@ -253,8 +254,10 @@ namespace OC_Bus_Tracker
 
         private async Task<String> getJSON(HttpRequestMessage message)
         {
-            HttpResponseMessage response = await httpClient.SendRequestAsync(message);
-            return response.Content.ToString();
+            client = new HttpClient();
+            client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now;
+            HttpResponseMessage response = await client.SendRequestAsync(message);
+            return response.Content.ToString();               
         }
 
         public class StopRoute

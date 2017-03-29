@@ -10,9 +10,13 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Pivot x:Name="rootPivot" Title="OC Bus Tracker" SelectionChanged="PivotChanged">
             <PivotItem x:Name="PinnedPivot" Header="Pinned">
-                <StackPanel>
-                    <ProgressRing x:Name="SearchRingPinned" Visibility="Collapsed"></ProgressRing>
-                    <ListView x:Name="pinnedList" ItemsSource="{Binding}" SelectionMode="None">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ProgressRing Grid.Row="0" x:Name="SearchRingPinned" Visibility="Collapsed"></ProgressRing>
+                    <ListView Grid.Row="1" x:Name="pinnedList" ItemsSource="{Binding}" SelectionMode="None" ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ListViewItem>
@@ -29,13 +33,18 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                </StackPanel>
+                </Grid>
             </PivotItem>
             <PivotItem Header="Search">
-                <StackPanel>
-                    <AutoSuggestBox x:Name="SearchBox" QueryIcon="Find" QuerySubmitted="SearchStop" PlaceholderText="Enter a stop number or name" TextChanged="SearchBox_TextChanged" SuggestionChosen="SearchBox_SuggestionChosen"/>
-                    <ProgressRing x:Name="SearchRing" Visibility="Collapsed"></ProgressRing>
-                    <ListView x:Name="resultsList" ItemsSource="{Binding}" SelectionMode="None">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <AutoSuggestBox Grid.Row="0"  x:Name="SearchBox" QueryIcon="Find" QuerySubmitted="SearchStop" PlaceholderText="Enter a stop number or name" TextChanged="SearchBox_TextChanged" SuggestionChosen="SearchBox_SuggestionChosen"/>
+                    <ProgressRing Grid.Row="1" x:Name="SearchRing" Visibility="Collapsed"></ProgressRing>
+                    <ListView Grid.Row="2" x:Name="resultsList" ItemsSource="{Binding}" SelectionMode="None" ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ListViewItem>
@@ -51,7 +60,7 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                </StackPanel>
+                </Grid>
             </PivotItem>
         </Pivot>
     </Grid>
